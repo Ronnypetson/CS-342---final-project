@@ -1,0 +1,70 @@
+Examples of SQL commands and queries for GYST project.
+Tables are pre-created, of course, using Apache Derby.
+
+--TABLE CREATION--
+CREATE TABLE COURSES
+  (ID INT NOT NULL GENERATED ALWAYS AS IDENTITY,
+  CLASS_NAME VARCHAR(255) NOT NULL,
+  SUBJECT VARCHAR(4) NOT NULL,
+  COURSE_NUMBER INT NOT NULL,
+  PRIMARY KEY (ID));
+  
+CREATE TABLE ASSIGNMENTS
+  (A_ID INT NOT NULL GENERATED ALWAYS AS IDENTITY,
+  ASSN_NAME VARCHAR(255) NOT NULL,
+  DUE_DATE DATE NOT NULL,
+  GRADE DOUBLE,
+  ID INT,
+  PRIMARY KEY (A_ID),
+  FOREIGN KEY (ID) REFERENCES COURSES(ID));
+  
+
+--COMMANDS--
+
+//Primary key is auto-generated and is not defined in INSERT.
+INSERT INTO COURSES (CLASS_NAME,SUBJECT,COURSE_NUMBER) VALUES ('Software 
+
+Design', 'CS', 342);
+
+//Can delete by primary key or any other field, probably.
+DELETE FROM COURSES WHERE ID = 1;
+DELETE FROM ASSIGNMENTS WHERE ID=4 AND ASSN_NAME='HW3';
+
+//Inserted multiple rows for the sake of testing. Will need to define
+//Foreign Key, but not Primary Key.
+INSERT INTO ASSIGNMENTS (ASSN_NAME,DUE_DATE,ID)
+VALUES ('HW1','2015-8-30',2),('HW2','2015-9-15',2),('HW3','2015-10-
+
+10',2);
+
+//UPDATING GRADE/DUE_DATE. DOUBLE data-type doesn't require the mantissa 
+
+when updating.
+UPDATE ASSIGNMENTS SET GRADE=98.25 WHERE A_ID=1;
+UPDATE ASSIGNMENTS SET GRADE=98 WHERE ASSN_NAME='HW2' AND ID=3;
+UPDATE ASSIGNMENTS SET DUE_DATE='2015-11-30' WHERE ASSN_NAME='HW2' AND 
+
+ID=5;
+
+
+--QUERIES--
+//Average grade in one class. Classes with ungraded assignments aren't 
+
+included, but 0's are.
+SELECT AVG(GRADE) FROM ASSIGNMENTS WHERE ID=3;
+
+//Get all assignments past-due with no grade entered...
+SELECT * FROM ASSIGNMENTS WHERE DUE_DATE <= CURRENT DATE AND GRADE IS 
+
+NULL;
+
+//Display assignments with upcoming due dates.
+//Derby doesn't have DATE_ADD function. Arguement must be passed as a 
+
+string
+//from Java, meaning Java must get current date, add-a-week, then convert 
+
+to SQL format.
+SELECT * FROM ASSIGNMENTS WHERE DUE_DATE >= CURRENT DATE AND DUE_DATE <= 
+
+'2015-12-5';
