@@ -44,6 +44,13 @@ public class Course
         return this.courseNumber;
     }
     
+    public void setId(int id)
+    // PRE: id > 0
+    // POST: this.id is updated to id
+    {
+        this.id = id;
+    }
+    
     public void setClassName(String className)
     // PRE: className must be initialized
     // POST: this.className is updated to className
